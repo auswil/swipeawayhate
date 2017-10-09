@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1089470080024",
+    "firebase_url": "https://swipeawayhate.firebaseio.com",
+    "project_id": "swipeawayhate",
+    "storage_bucket": "swipeawayhate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089470080024:android:38fc6c101b7949fe",
+        "android_client_info": {
+          "package_name": "com.example.austinwilliams.swipeawayhate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1089470080024-m3431igqopuuvscnuqcsb6s7tqn3bc6d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT2zBat0bLZ8VdZy-cQk5gz-QyjrWu1S4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
