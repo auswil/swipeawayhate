@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1089470080024-i1lcsgkfv0l9rka8ps2ccch26j2las0n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.austinwilliams.swipeawayhate",
+            "certificate_hash": "a646d433598681ae36458f8b4d0b34b9861ccf04"
+          }
+        },
+        {
           "client_id": "1089470080024-m3431igqopuuvscnuqcsb6s7tqn3bc6d.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1089470080024-m3431igqopuuvscnuqcsb6s7tqn3bc6d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
