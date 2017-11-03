@@ -9,5 +9,15 @@
     <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign In</string>
     <string name="auth_failed">Authentication failed</string>
-    <string name="next">Next</string>
+    <string name="loading">Loading...</string>
+    <string name="ok">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="normal">This tweet is not offensive.</string>
+    <string name="hate">This tweet contains hate speech.</string>
+    <string name="label_confirm">Label Confirmation</string>
+    <string name="skip_confirm">Skip Confirmation</string>
+    <string name="skip">Skip this tweet</string>
+    <string name="offensive">This tweet is offensive, but doesn\'t contain hate speech.</string>
+    <string name="instructions">
+        Instructions: \nSwipe right if the tweet is not offensive \nSwipe down if it is offensive \nSwipe left if it contains hate speech \nSwipe up to skip</string>
 </resources>
