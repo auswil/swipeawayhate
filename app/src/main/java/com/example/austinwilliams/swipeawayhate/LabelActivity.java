@@ -23,6 +23,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
+import static com.example.austinwilliams.swipeawayhate.R.string.hate;
+
 public class LabelActivity extends AppCompatActivity  {
 
     private TextView tv;
@@ -30,6 +34,7 @@ public class LabelActivity extends AppCompatActivity  {
     private String currentKey;
     private int completed;
     private int correct;
+    private final int VOTES_NEEDED = 3;
     private static final String TAG = LabelActivity.class.getSimpleName();
     FirebaseUser user;
     FirebaseDatabase database;
@@ -46,13 +51,91 @@ public class LabelActivity extends AppCompatActivity  {
         private final int DISTANCE = 100;
         private final int VELOCITY = 100;
         private Context context;
+        private int hateVotes, normalVotes, offensiveVotes, valuesSet;
 
         public MyGestureListener(Context context) {
             this.context = context;
         }
 
-        private void labelNormal() {
+        private void setValues() {
+            Log.d(TAG, "Setting Values: " + valuesSet);
+            if (valuesSet == 3) {
+                DatabaseReference setNormal = database.getReference("finalized/" + currentKey + "/normal");
+                setNormal.setValue(normalVotes);
 
+                DatabaseReference setHate = database.getReference("finalized/" + currentKey + "/hate");
+                setHate.setValue(hateVotes);
+
+                DatabaseReference setOffensive = database.getReference("finalized/" + currentKey + "/offensive");
+                setOffensive.setValue(offensiveVotes);
+
+                DatabaseReference checkAndRemove = database.getReference("finalized/" + currentKey);
+                checkAndRemove.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            DatabaseReference remove = database.getReference("tweets/" + currentKey);
+                            remove.removeValue();
+                            advance();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
+
+        private void finalizeVotes() {
+            Log.d(TAG, "Finalize votes for " + currentKey);
+            hateVotes = 0;
+            normalVotes = 0;
+            offensiveVotes = 0;
+            valuesSet = 0;
+
+            DatabaseReference normalRef = database.getReference("labels/" + currentKey + "/normal");
+            normalRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int votes = dataSnapshot.getValue(int.class);
+                    normalVotes = votes;
+                    valuesSet++;
+                    setValues();
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+            DatabaseReference hateRef = database.getReference("labels/" + currentKey + "/hate");
+            hateRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int votes = dataSnapshot.getValue(int.class);
+                    hateVotes = votes;
+                    valuesSet++;
+                    setValues();
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+            DatabaseReference offensiveRef = database.getReference("labels/" + currentKey + "/offensive");
+            offensiveRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int votes = dataSnapshot.getValue(int.class);
+                    offensiveVotes = votes;
+                    valuesSet++;
+                    setValues();
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
         }
 
         private void swipeRight() {
@@ -85,6 +168,8 @@ public class LabelActivity extends AppCompatActivity  {
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     int votes = dataSnapshot.getValue(int.class);
                                     ref.setValue(votes + 1);
+                                    if (votes+1 > VOTES_NEEDED) finalizeVotes();
+                                    else advance();
                                 }
 
                                 @Override
@@ -93,7 +178,7 @@ public class LabelActivity extends AppCompatActivity  {
                                 }
                             });
                         }
-                        advance();
+                        else advance();
                     }
                 }
             });
@@ -141,6 +226,8 @@ public class LabelActivity extends AppCompatActivity  {
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     int votes = dataSnapshot.getValue(int.class);
                                     ref.setValue(votes + 1);
+                                    if (votes+1 > VOTES_NEEDED) finalizeVotes();
+                                    else advance();
                                 }
 
                                 @Override
@@ -149,7 +236,7 @@ public class LabelActivity extends AppCompatActivity  {
                                 }
                             });
                         }
-                        advance();
+                        else advance();
                     }
                     // User clicked OK button
                     Log.d(TAG, "CLICKED OK");
@@ -240,6 +327,8 @@ public class LabelActivity extends AppCompatActivity  {
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     int votes = dataSnapshot.getValue(int.class);
                                     ref.setValue(votes + 1);
+                                    if (votes+1 > VOTES_NEEDED) finalizeVotes();
+                                    else advance();
                                 }
 
                                 @Override
@@ -248,7 +337,7 @@ public class LabelActivity extends AppCompatActivity  {
                                 }
                             });
                         }
-                        advance();
+                        else advance();
                     }
 
                     // User clicked OK button
@@ -369,22 +458,47 @@ public class LabelActivity extends AppCompatActivity  {
 
     }
 
+    private void selectResult(DataSnapshot dataSnapshot, int stop) {
+        int i = 0;
+        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+            if (i == stop) {
+                tv.setText(snap.getValue(String.class));
+                currentKey = snap.getKey();
+            }
+            i++;
+        }
+    }
+
     private void setText(DataSnapshot dataSnapshot) {
         text = dataSnapshot.getValue(String.class);
 
         if (text != null) {
             Query tweets = database.getReference("tweets").orderByKey().startAt(text).limitToFirst(2);
-            tweets.addValueEventListener(new ValueEventListener() {
+            tweets.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(final DataSnapshot dataSnapshot) {
                     Log.d(TAG, dataSnapshot.toString());
                     int i = 0;
-                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                        if (i == 1) {
-                            tv.setText(snap.getValue(String.class));
-                            currentKey = snap.getKey();
-                        }
-                        i++;
+                    int stop = 1;
+                    if (currentKey == null) {
+                        selectResult(dataSnapshot, 0);
+                    }
+                    else {
+                        DatabaseReference ref = database.getReference("finalized/" + currentKey);
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot ds) {
+                                if (ds.getValue() != null) {
+                                    selectResult(dataSnapshot, 0);
+                                }
+                                else selectResult(dataSnapshot, 1);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 }
 

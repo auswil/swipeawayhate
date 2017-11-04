@@ -5,6 +5,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="action_sign_in">Sign In</string>
     <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign In</string>
@@ -12,12 +13,22 @@
     <string name="loading">Loading...</string>
     <string name="ok">Confirm</string>
     <string name="cancel">Cancel</string>
-    <string name="normal">This tweet is not offensive.</string>
-    <string name="hate">This tweet contains hate speech.</string>
+    <string name="normal">This tweet is not offensive and does not contain hate speech.
+        \n\nHate speech: <i>speech expressing hatred of a particular group of people</i>
+        \nOffensive: <i>causing displeasure or resentment</i></string>
+    <string name="hate">This tweet contains hate speech.
+        \n\nHate speech: <i>speech expressing hatred of a particular group of people</i>
+        \nOffensive: <i>causing displeasure or resentment</i></string>
+    <string name="definitions"></string>
     <string name="label_confirm">Label Confirmation</string>
     <string name="skip_confirm">Skip Confirmation</string>
-    <string name="skip">Skip this tweet</string>
-    <string name="offensive">This tweet is offensive, but doesn\'t contain hate speech.</string>
+    <string name="skip">Skip this tweet.</string>
+    <string name="offensive">This tweet is offensive to you or to others, but doesn\'t contain hate speech.
+        \n\nHate speech: <i>speech expressing hatred of a particular group of people</i>
+        \nOffensive: <i>causing displeasure or resentment</i></string>
     <string name="instructions">
         Instructions: \nSwipe right if the tweet is not offensive \nSwipe down if it is offensive \nSwipe left if it contains hate speech \nSwipe up to skip</string>
+    <string name="label">Label Tweets</string>
+    <string name="description">By labeling tweets here in SwipeAwayHate, you contibute to building an open and free dataset on hate speech.\n\nThis data can help train computer models to better detect online hate speech in an automated fashion.</string>
+    <string name="welcome">Welcome to SwipeAwayHate!\n\nRegister or log in to help identify online hate speech\n</string>
 </resources>
