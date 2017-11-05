@@ -87,7 +87,7 @@ tools:context="com.example.austinwilliams.swipeawayhate.RegisterActivity">
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/email_register_button"
+                android:id="@+id/register_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

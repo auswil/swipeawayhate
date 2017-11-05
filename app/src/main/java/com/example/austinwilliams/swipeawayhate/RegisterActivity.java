@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+        setContentView(R.layout.activity_register);
         Log.d(TAG, "HELLO");
 
         mAuth = FirebaseAuth.getInstance();
@@ -56,7 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
         mPasswordView = (EditText) findViewById(R.id.password);
         mConfirmView = (EditText) findViewById(R.id.confirm);
 
-        Button mRegisterButton = (Button) findViewById(R.id.email_register_button);
+        Button mRegisterButton = (Button) findViewById(R.id.register_button);
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,11 +116,11 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void addUserToDatabase(FirebaseUser user) {
-        /*
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("users/" + user.getUid() + "/lastKey");
-        myRef.setValue("Does this work");
-        */
+        DatabaseReference completedRef = database.getReference("users/" + user.getUid() + "/completed");
+        completedRef.setValue(0);
+        DatabaseReference correctRef = database.getReference("users/" + user.getUid() + "/correct");
+        correctRef.setValue(0);
     }
 
     private void handleNewActivity() {

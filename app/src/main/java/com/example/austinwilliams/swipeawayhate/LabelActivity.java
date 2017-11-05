@@ -74,9 +74,26 @@ public class LabelActivity extends AppCompatActivity  {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getValue() != null) {
+                            Log.d(TAG, "Removing tweet: " + currentKey);
                             DatabaseReference remove = database.getReference("tweets/" + currentKey);
-                            remove.removeValue();
-                            advance();
+                            remove.removeValue(new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    getNextTweet();
+                                    /*Query tweets = database.getReference("tweets").orderByKey().endAt(currentKey).limitToLast(1);
+                                    tweets.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot posts) {
+                                            advanceAfterDeletion(posts);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });*/
+                                }
+                            });
                         }
                     }
 
@@ -462,6 +479,7 @@ public class LabelActivity extends AppCompatActivity  {
         int i = 0;
         for (DataSnapshot snap : dataSnapshot.getChildren()) {
             if (i == stop) {
+                Log.d(TAG, "Setting text: " + stop + " " + snap.getValue(String.class));
                 tv.setText(snap.getValue(String.class));
                 currentKey = snap.getKey();
             }
@@ -469,8 +487,9 @@ public class LabelActivity extends AppCompatActivity  {
         }
     }
 
-    private void setText(DataSnapshot dataSnapshot) {
-        text = dataSnapshot.getValue(String.class);
+    private void setText(DataSnapshot key) {
+        text = key.getValue(String.class);
+        Log.d(TAG, "LastKey has changed. Getting next tweet: " + currentKey);
 
         if (text != null) {
             Query tweets = database.getReference("tweets").orderByKey().startAt(text).limitToFirst(2);
@@ -478,28 +497,7 @@ public class LabelActivity extends AppCompatActivity  {
                 @Override
                 public void onDataChange(final DataSnapshot dataSnapshot) {
                     Log.d(TAG, dataSnapshot.toString());
-                    int i = 0;
-                    int stop = 1;
-                    if (currentKey == null) {
-                        selectResult(dataSnapshot, 0);
-                    }
-                    else {
-                        DatabaseReference ref = database.getReference("finalized/" + currentKey);
-                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot ds) {
-                                if (ds.getValue() != null) {
-                                    selectResult(dataSnapshot, 0);
-                                }
-                                else selectResult(dataSnapshot, 1);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
+                    selectResult(dataSnapshot, 1);
                 }
 
                 @Override
@@ -510,18 +508,11 @@ public class LabelActivity extends AppCompatActivity  {
         }
         else {
             Query tweets = database.getReference("tweets").orderByKey().limitToFirst(2);
-            tweets.addValueEventListener(new ValueEventListener() {
+            tweets.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.d(TAG, dataSnapshot.toString());
-                    int i = 0;
-                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                        if (i == 0) {
-                            tv.setText(snap.getValue(String.class));
-                            currentKey = snap.getKey();
-                        }
-                        i++;
-                    }
+                    selectResult(dataSnapshot, 0);
                 }
 
                 @Override
@@ -542,7 +533,19 @@ public class LabelActivity extends AppCompatActivity  {
         }
     }
 
+    private void advanceAfterDeletion(DataSnapshot ds) {
+        Log.d(TAG, ds.toString());
+        //only run on first result
+        for (DataSnapshot snap : ds.getChildren()) {
+            currentKey = snap.getKey();
+            break;
+        }
+        advance();
+
+    }
+
     private void advance() {
+        Log.d(TAG, "Advancing from " + currentKey);
         tv.setText("Loading...");
         DatabaseReference ref = database.getReference("users/" + user.getUid() + "/lastKey");
         ref.setValue(currentKey);
