@@ -11,6 +11,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.app.AlertDialog;
 
@@ -36,9 +37,10 @@ public class LabelActivity extends AppCompatActivity  {
     private int correct;
     private final int VOTES_NEEDED = 3;
     private static final String TAG = LabelActivity.class.getSimpleName();
-    FirebaseUser user;
-    FirebaseDatabase database;
+    private FirebaseUser user;
+    private FirebaseDatabase database;
     private GestureDetectorCompat mDetector;
+    private ProgressBar progress;
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -404,6 +406,7 @@ public class LabelActivity extends AppCompatActivity  {
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         mDetector = new GestureDetectorCompat(this, new MyGestureListener(LabelActivity.this));
+        progress = (ProgressBar) findViewById(R.id.indeterminateBar);
         getCorrect();
         readyToLabel();
     }
@@ -445,6 +448,7 @@ public class LabelActivity extends AppCompatActivity  {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                progress.setVisibility(View.INVISIBLE);
                 tv.setText(dataSnapshot.getValue(String.class));
             }
 
@@ -480,6 +484,7 @@ public class LabelActivity extends AppCompatActivity  {
         for (DataSnapshot snap : dataSnapshot.getChildren()) {
             if (i == stop) {
                 Log.d(TAG, "Setting text: " + stop + " " + snap.getValue(String.class));
+                progress.setVisibility(View.INVISIBLE);
                 tv.setText(snap.getValue(String.class));
                 currentKey = snap.getKey();
             }
@@ -524,7 +529,8 @@ public class LabelActivity extends AppCompatActivity  {
     }
 
     private void nextExample(boolean vote) {
-        tv.setText("Loading...");
+        progress.setVisibility(View.VISIBLE);
+        tv.setText(R.string.blank);
         DatabaseReference completeRef = database.getReference("users/" + user.getUid() + "/completed");
         completeRef.setValue(completed + 1);
         if (vote) {
@@ -546,7 +552,8 @@ public class LabelActivity extends AppCompatActivity  {
 
     private void advance() {
         Log.d(TAG, "Advancing from " + currentKey);
-        tv.setText("Loading...");
+        tv.setText(R.string.blank);
+        progress.setVisibility(View.VISIBLE);
         DatabaseReference ref = database.getReference("users/" + user.getUid() + "/lastKey");
         ref.setValue(currentKey);
     }

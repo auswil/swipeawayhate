@@ -11,6 +11,7 @@
     <string name="action_sign_in_short">Sign In</string>
     <string name="auth_failed">Authentication failed</string>
     <string name="loading">Loading...</string>
+    <string name="blank"> </string>
     <string name="ok">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="normal">This tweet is not offensive and does not contain hate speech.
