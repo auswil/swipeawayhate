@@ -71,6 +71,9 @@ public class LabelActivity extends AppCompatActivity  {
                 DatabaseReference setOffensive = database.getReference("finalized/" + currentKey + "/offensive");
                 setOffensive.setValue(offensiveVotes);
 
+                DatabaseReference setText = database.getReference("finalized/" + currentKey + "/text");
+                setText.setValue(tv.getText());
+
                 DatabaseReference checkAndRemove = database.getReference("finalized/" + currentKey);
                 checkAndRemove.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
